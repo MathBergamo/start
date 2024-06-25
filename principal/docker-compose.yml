@@ -1,0 +1,25 @@
+version: '3.5'
+services:
+  db:
+    image: postgres
+    container_name: start-db
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=start
+      - POSTGRES_PASSWORD=start
+      - POSTGRES_DB=start
+    volumes:
+      - start-db-volume:/var/lib/postgresql/data
+    restart: always
+    networks:
+      - startnetwork
+
+volumes:
+  start-db-volume:
+    driver: local
+
+
+networks:
+  startnetwork:
+    name: startnetwork-network
