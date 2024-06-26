@@ -23,4 +23,15 @@ public class ClientesController {
     public ResponseEntity<ClientesDTO> findById(@PathVariable @Valid Long id) {
         return ResponseEntity.ok().body(service.findById(id));
     }
+
+    @PatchMapping
+    public ResponseEntity<ClientesDTO> update(@Valid @RequestBody ClientesDTO dto) {
+        return ResponseEntity.ok(service.update(dto));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
+        service.delete(id);
+        return ResponseEntity.noContent().build();
+    }
 }

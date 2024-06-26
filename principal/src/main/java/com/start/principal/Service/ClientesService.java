@@ -28,8 +28,25 @@ public class ClientesService {
 
     public ClientesDTO findById(Long id) {
         Optional<Clientes> clienteById = repository.findById(id);
-        Clientes cliente = new Clientes();
-        modelMapper.map(clienteById.get(), cliente);
+        // TODO: Implementar validações
+        return modelMapper.map(clienteById.get(), ClientesDTO.class);
+    }
+
+    @Transactional
+    public ClientesDTO update(ClientesDTO dto) {
+        Clientes cliente = repository.findByCpf(dto.getCpf());
+        modelMapper.map(dto, cliente);
+        repository.save(cliente);
         return modelMapper.map(cliente, ClientesDTO.class);
+    }
+
+    @Transactional
+    public void delete(Long id) {
+        findById(id);
+        try {
+            repository.deleteById(id);
+        } catch (Exception e) {
+            throw new RuntimeException("Não é possível realizar a exclusão!");
+        }
     }
 }
