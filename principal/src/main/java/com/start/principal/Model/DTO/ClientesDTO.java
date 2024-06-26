@@ -1,5 +1,6 @@
 package com.start.principal.Model.DTO;
 
+import com.start.principal.Model.enums.ClientesCargo;
 import lombok.Data;
 
 import java.math.BigDecimal;
@@ -7,6 +8,8 @@ import java.time.LocalDate;
 
 @Data
 public class ClientesDTO {
+
+    private ClientesCargo cargo;
 
     private String nome;
 
@@ -16,7 +19,4 @@ public class ClientesDTO {
 
     private String cpf;
 
-    private String email;
-
-    private String senha;
 }

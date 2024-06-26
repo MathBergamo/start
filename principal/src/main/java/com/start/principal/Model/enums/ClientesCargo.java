@@ -4,12 +4,12 @@ import lombok.Getter;
 
 @Getter
 public enum ClientesCargo {
-    ADMIN("ROLE_ADMIN"),
-    USER("ROLE_USER");
+    ADMIN("CARGO_ADMIN"),
+    USER("CARGO_USER");
 
-    private final String role;
+    private final String cargo;
 
-    ClientesCargo(String role) {
-        this.role = role;
+    ClientesCargo(String cargo) {
+        this.cargo = cargo;
     }
 }

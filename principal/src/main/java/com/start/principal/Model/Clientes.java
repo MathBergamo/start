@@ -27,9 +27,10 @@ public class Clientes {
     @Column(unique = true)
     private Long id;
 
-//    @Column(name = "cargo", nullable = false)
-//    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-//    private ClientesCargo cargo;
+    @Column(name = "cargo", nullable = false)
+    @Enumerated(EnumType.STRING)
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    private ClientesCargo cargo;
 
     @NotBlank
     private String nome;
@@ -42,31 +43,17 @@ public class Clientes {
     private BigDecimal salario;
 
     @NotBlank
+    @Column(unique = true)
     private String cpf;
 
-    @NotBlank
-    private String email;
-
-    @NotBlank
-    @JsonIgnore
-    private String senha;
-
-
-    public Clientes(Long id, String nome, LocalDate dataNascimento, String cpf, String email, String senha) {
-        this.id = id;
-        this.nome = nome;
-        this.dataNascimento = dataNascimento;
-        this.cpf = cpf;
-        this.email = email;
-        this.senha = senha;
+    public Clientes(Clientes clientes) {
     }
 
     public Clientes(ClientesDTO dto) {
+        this.cargo = dto.getCargo();
         this.nome = dto.getNome();
         this.dataNascimento = dto.getDataNascimento();
         this.cpf = dto.getCpf();
-        this.email = dto.getEmail();
-        this.senha = dto.getSenha();
         this.salario = dto.getSalario();
     }
 }

@@ -5,10 +5,7 @@ import com.start.principal.Service.ClientesService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/clientes")
@@ -20,5 +17,10 @@ public class ClientesController {
     @PostMapping()
     public ResponseEntity<ClientesDTO> create(@RequestBody @Valid ClientesDTO dto) {
         return ResponseEntity.ok().body(service.create(dto));
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<ClientesDTO> findById(@PathVariable @Valid Long id) {
+        return ResponseEntity.ok().body(service.findById(id));
     }
 }
