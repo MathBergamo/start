@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/clientes")
 public class ClientesController {
@@ -17,6 +19,11 @@ public class ClientesController {
     @PostMapping()
     public ResponseEntity<ClientesDTO> create(@RequestBody @Valid ClientesDTO dto) {
         return ResponseEntity.ok().body(service.create(dto));
+    }
+
+    @GetMapping("/all")
+    public ResponseEntity<List<ClientesDTO>> findAll() {
+        return ResponseEntity.ok(service.findAll());
     }
 
     @GetMapping("/{id}")

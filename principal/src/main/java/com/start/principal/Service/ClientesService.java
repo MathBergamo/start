@@ -8,6 +8,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -19,6 +20,8 @@ public class ClientesService {
     @Autowired
     private ModelMapper modelMapper;
 
+    // TODO: Implementar validações
+
     @Transactional
     public ClientesDTO create(ClientesDTO dto) {
         Clientes novo_cliente = new Clientes(dto);
@@ -28,8 +31,12 @@ public class ClientesService {
 
     public ClientesDTO findById(Long id) {
         Optional<Clientes> clienteById = repository.findById(id);
-        // TODO: Implementar validações
         return modelMapper.map(clienteById.get(), ClientesDTO.class);
+    }
+
+    public List<ClientesDTO> findAll() {
+        List<Clientes> clientes = repository.findAll();
+        return modelMapper.map(clientes, List.class);
     }
 
     @Transactional
