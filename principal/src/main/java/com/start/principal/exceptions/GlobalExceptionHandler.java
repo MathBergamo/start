@@ -1,4 +1,4 @@
-package com.start.principal.Exceptions;
+package com.start.principal.exceptions;
 
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;

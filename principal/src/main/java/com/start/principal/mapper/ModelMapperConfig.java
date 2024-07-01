@@ -1,4 +1,4 @@
-package com.start.principal.Mapper;
+package com.start.principal.mapper;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.context.annotation.Bean;
