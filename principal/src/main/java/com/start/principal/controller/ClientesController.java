@@ -1,8 +1,8 @@
 package com.start.principal.controller;
 
-import com.start.principal.model.Clientes;
 import com.start.principal.model.DTO.ClientesAtualizarDTO;
 import com.start.principal.model.DTO.ClientesCadastroDTO;
+import com.start.principal.model.DTO.ClientesFindDTO;
 import com.start.principal.model.DTO.ClientesLoginDTO;
 import com.start.principal.repository.ClientesRepository;
 import com.start.principal.service.ClientesService;
@@ -25,15 +25,15 @@ public class ClientesController {
     private ClientesRepository clientesRepository;
 
     @GetMapping("/all")
-    public ResponseEntity<List<Clientes>> findAll() {
-        return ResponseEntity.ok(clientesRepository.findAll());
+    public ResponseEntity<List<ClientesFindDTO>> findAll() {
+        return ResponseEntity.ok(clientesService.findAll());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Clientes> findById(@PathVariable Long id) {
-        return clientesRepository.findById(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+    public ResponseEntity<ClientesFindDTO> findById(@PathVariable Long id) {
+        return clientesService.findById(id)
+                .map(resposta -> ResponseEntity.status(HttpStatus.OK).body(resposta))
+                .orElse(ResponseEntity.status(HttpStatus.NOT_FOUND).build());
     }
 
     @PostMapping("/login")
@@ -59,12 +59,6 @@ public class ClientesController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deletar(@PathVariable Long id) {
-        clientesRepository.findById(id);
-        try {
-            clientesRepository.deleteById(id);
-        } catch (Exception e) {
-            throw new RuntimeException("Não é possível realizar a exclusão!");
-        }
-        return ResponseEntity.noContent().build();
+        return clientesService.delete(id);
     }
 }
