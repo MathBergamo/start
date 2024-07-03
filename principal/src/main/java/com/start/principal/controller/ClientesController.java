@@ -37,7 +37,7 @@ public class ClientesController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<ClientesLoginDTO> autenticarCliente(@RequestBody ClientesLoginDTO dto) {
+    public ResponseEntity<ClientesLoginDTO> autenticarCliente(@RequestBody @Valid ClientesLoginDTO dto) {
         return clientesService.autenticarCliente(dto)
                 .map(resposta -> ResponseEntity.status(HttpStatus.OK).body(resposta))
                 .orElse(ResponseEntity.status(HttpStatus.UNAUTHORIZED).build());
@@ -51,7 +51,7 @@ public class ClientesController {
     }
 
     @PutMapping("/atualizar")
-    public ResponseEntity<ClientesAtualizarDTO> atualizarCliente(@Valid @RequestBody ClientesAtualizarDTO dto) {
+    public ResponseEntity<ClientesAtualizarDTO> atualizarCliente(@RequestBody @Valid ClientesAtualizarDTO dto) {
         return clientesService.atualizarCliente(dto)
                 .map(resposta -> ResponseEntity.status(HttpStatus.OK).body(resposta))
                 .orElse(ResponseEntity.status(HttpStatus.NOT_FOUND).build());

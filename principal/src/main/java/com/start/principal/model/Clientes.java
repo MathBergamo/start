@@ -10,6 +10,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.validator.constraints.br.CPF;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -46,7 +47,7 @@ public class Clientes {
     @NotNull
     private BigDecimal salario;
 
-    @NotBlank
+    @CPF
     @Column(unique = true)
     private String cpf;
 

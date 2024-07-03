@@ -13,6 +13,5 @@ public class ClientesAtualizarDTO {
 
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String senha;
-    private String nome;
     private BigDecimal salario;
 }

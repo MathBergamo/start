@@ -7,16 +7,12 @@ import com.start.principal.model.DTO.ClientesFindDTO;
 import com.start.principal.model.DTO.ClientesLoginDTO;
 import com.start.principal.repository.ClientesRepository;
 import com.start.principal.security.JwtService;
+import com.start.principal.validation.ClientesValidation;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,20 +21,17 @@ import java.util.Optional;
 @Service
 public class ClientesService {
 
-
     @Autowired
     private ClientesRepository clientesRepository;
-
 
     @Autowired
     private JwtService jwtService;
 
-
-    @Autowired
-    private AuthenticationManager authenticationManager;
-
     @Autowired
     private ModelMapper modelMapper;
+
+    @Autowired
+    private ClientesValidation clientesValidation;
 
     public List<ClientesFindDTO> findAll() {
         List<Clientes> clientes = clientesRepository.findAll();
@@ -61,58 +54,43 @@ public class ClientesService {
     }
 
     public Optional<ClientesCadastroDTO> cadastrarCliente(ClientesCadastroDTO dto) {
-        if (clientesRepository.findByEmail(dto.getEmail()).isPresent()) {
-            return Optional.empty();
-        }
+        clientesValidation.emailValidator(dto.getEmail());
+        clientesValidation.senhaValidator(dto.getSenha());
+        clientesValidation.nomeValidator(dto.getNome());
+        clientesValidation.dataNascimentoValidator(dto.getDataNascimento());
         dto.setSenha(criptografarSenha(dto.getSenha()));
+
         Clientes clienteCadastrado = clientesRepository.save(modelMapper.map(dto, Clientes.class));
+
         return Optional.of(modelMapper.map(clienteCadastrado, ClientesCadastroDTO.class));
     }
 
     public Optional<ClientesLoginDTO> autenticarCliente(ClientesLoginDTO dto) {
-        var credenciais = new UsernamePasswordAuthenticationToken(dto.getEmail(), dto.getSenha());
-        Authentication authentication = authenticationManager.authenticate(credenciais);
+        clientesValidation.autenticarClienteValidator(dto);
 
-        if (authentication.isAuthenticated()) {
-            return clientesRepository.findByEmail(dto.getEmail())
-                    .map(cliente -> {
-                        dto.setId(cliente.getId());
-                        dto.setNome(cliente.getNome());
-                        dto.setEmail(cliente.getEmail());
-                        dto.setToken(gerarToken(dto.getEmail()));
-                        dto.setSenha("");
-                        return dto;
-                    });
-        }
-
-        return Optional.empty();
+        return clientesRepository.findByEmail(dto.getEmail())
+                .map(cliente -> {
+                    dto.setId(cliente.getId());
+                    dto.setNome(cliente.getNome());
+                    dto.setEmail(cliente.getEmail());
+                    dto.setToken(gerarToken(dto.getEmail()));
+                    dto.setSenha("");
+                    return dto;
+                });
     }
-
 
     public Optional<ClientesAtualizarDTO> atualizarCliente(ClientesAtualizarDTO dto) {
-        if (clientesRepository.findById(dto.getId()).isPresent()) {
-            Optional<Clientes> buscaUsuario = clientesRepository.findById(dto.getId());
+        clientesValidation.atualizarClienteValidator(dto.getId());
+        Optional<Clientes> buscaCliente = clientesRepository.findById(dto.getId());
+        Clientes clienteAtualizado = buscaCliente.get();
 
-            if ((buscaUsuario.isPresent()) && (!buscaUsuario.get().getId().equals(dto.getId()))) {
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Email já está em uso!", null);
-            }
-            Clientes clienteAtualizado = buscaUsuario.get();
-            dto.setSenha(criptografarSenha(dto.getSenha()));
-            modelMapper.map(dto, clienteAtualizado);
-            clientesRepository.save(clienteAtualizado);
-            return Optional.of(dto);
-        }
+        clientesValidation.emailValidator(dto.getEmail());
+        clientesValidation.senhaValidator(dto.getSenha());
+        dto.setSenha(criptografarSenha(dto.getSenha()));
+        modelMapper.map(dto, clienteAtualizado);
+        clientesRepository.save(clienteAtualizado);
 
-        return Optional.empty();
-    }
-
-    private String criptografarSenha(String senha) {
-        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
-        return encoder.encode(senha);
-    }
-
-    private String gerarToken(String usuario) {
-        return "Bearer " + jwtService.generateToken(usuario);
+        return Optional.of(dto);
     }
 
     public ResponseEntity<Void> delete(Long id) {
@@ -123,5 +101,14 @@ public class ClientesService {
             throw new RuntimeException("Não é possível realizar a exclusão!");
         }
         return ResponseEntity.noContent().build();
+    }
+
+    private String criptografarSenha(String senha) {
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+        return encoder.encode(senha);
+    }
+
+    private String gerarToken(String usuario) {
+        return "Bearer " + jwtService.generateToken(usuario);
     }
 }
