@@ -54,7 +54,6 @@ public class ClientesService {
     }
 
     public Optional<ClientesCadastroDTO> cadastrarCliente(ClientesCadastroDTO dto) {
-        clientesValidation.emailValidator(dto.getEmail());
         clientesValidation.senhaValidator(dto.getSenha());
         clientesValidation.nomeValidator(dto.getNome());
         clientesValidation.dataNascimentoValidator(dto.getDataNascimento());
