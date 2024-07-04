@@ -30,7 +30,7 @@ public class ClientesValidation {
 
         try {
             if (!Pattern.matches(regex, name)) {
-                throw new IllegalArgumentException("Nome inválido. Certifique-se de que ele nome e sobrenome separados por espaço e não contenha números ou caracteres especiais");
+                throw new IllegalArgumentException("Nome inválido. Certifique-se de haver nome e sobrenome separados por espaço e não contenha números ou caracteres especiais");
             }
         } catch (IllegalArgumentException e) {
             throw new IllegalArgumentException(e.getMessage());

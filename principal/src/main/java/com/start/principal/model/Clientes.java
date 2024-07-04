@@ -28,26 +28,26 @@ public class Clientes {
     @Column(unique = true)
     private Long id;
 
-    @Schema(example = "email@email.com.br")
     @NotNull(message = "O Atributo Email é Obrigatório!")
-    @Email(message = "O Atributo Email deve ser um email válido!")
+    @Column(unique = true)
+    @Email(message = "O formato do email é inválido.")
     private String email;
 
-    @NotBlank
+    @NotBlank(message = "O Atributo Senha é Obrigatório!")
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String senha;
 
-    @NotBlank
+    @NotBlank(message = "O Atributo Nome é Obrigatório!")
     private String nome;
 
-    @NotNull
+    @NotNull(message = "O Atributo Data de Nascimento é Obrigatório!")
     @Column(name = "data_nascimento")
     private LocalDate dataNascimento;
 
-    @NotNull
+    @NotNull(message = "O Atributo Salário é Obrigatório!")
     private BigDecimal salario;
 
-    @CPF
+    @CPF(message = "O formato do CPF é inválido.")
     @Column(unique = true)
     private String cpf;
 

@@ -17,10 +17,13 @@ import java.util.function.Function;
 @Component
 public class JwtService {
 
-    public static final String SECRET = "fcb3980a409a08f15dda2652405aafa9588ad956d1cb70026c0e051382aba444";
+    private String getSecret() {
+        return System.getenv("SECRET");
+    }
 
     private Key getSignKey() {
-        byte[] keyBytes = Decoders.BASE64.decode(SECRET);
+        String secret = getSecret();
+        byte[] keyBytes = Decoders.BASE64.decode(secret);
         return Keys.hmacShaKeyFor(keyBytes);
     }
 
