@@ -58,7 +58,7 @@ public class ClientesValidation {
 
         try {
             if (!Pattern.matches(regex, email)) {
-                throw new IllegalArgumentException("Email inválido");
+                throw new IllegalArgumentException("Email inválido. Certifique-se de colocar um email com formato correto");
             }
 
             if (clientesRepository.existsByEmail(email)) {

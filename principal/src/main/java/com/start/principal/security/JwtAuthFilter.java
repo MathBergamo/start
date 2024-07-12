@@ -9,6 +9,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -52,11 +53,9 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             }
             filterChain.doFilter(request, response);
 
-            //TODO: Analisar e resolver o problema do "SignatureException" - Exception 'java.security.SignatureException' is never thrown in the corresponding try block
         } catch (ExpiredJwtException | UnsupportedJwtException | IOException | MalformedJwtException
-                 | ResponseStatusException e) {
+                 | ResponseStatusException | AccessDeniedException e) {
             response.setStatus(HttpStatus.FORBIDDEN.value());
-            return;
         }
     }
 }
