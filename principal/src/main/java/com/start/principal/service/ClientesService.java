@@ -8,8 +8,13 @@ import com.start.principal.model.DTO.ClientesLoginDTO;
 import com.start.principal.repository.ClientesRepository;
 import com.start.principal.security.JwtService;
 import com.start.principal.validation.ClientesValidation;
+import jakarta.transaction.Transactional;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -44,6 +49,7 @@ public class ClientesService {
         return dtos;
     }
 
+    @Cacheable(value = "cliente", key = "#id")
     public Optional<ClientesFindDTO> findById(Long id) {
         Optional<Clientes> cliente = clientesRepository.findById(id);
         if (cliente.isPresent()) {
@@ -53,6 +59,7 @@ public class ClientesService {
         return Optional.empty();
     }
 
+    @Transactional
     public Optional<ClientesCadastroDTO> cadastrarCliente(ClientesCadastroDTO dto) {
         clientesValidation.senhaValidator(dto.getSenha());
         clientesValidation.nomeValidator(dto.getNome());
@@ -64,6 +71,7 @@ public class ClientesService {
         return Optional.of(modelMapper.map(clienteCadastrado, ClientesCadastroDTO.class));
     }
 
+    @Cacheable(value = "cliente", key = "#dto.email")
     public Optional<ClientesLoginDTO> autenticarCliente(ClientesLoginDTO dto) {
         clientesValidation.autenticarClienteValidator(dto);
 
@@ -78,20 +86,40 @@ public class ClientesService {
                 });
     }
 
+    @Transactional
+    @CacheEvict(value = "cliente", key = "#dto.id")
+    @CachePut(value = "clientesList")
     public Optional<ClientesAtualizarDTO> atualizarCliente(ClientesAtualizarDTO dto) {
         clientesValidation.atualizarClienteValidator(dto.getId());
         Optional<Clientes> buscaCliente = clientesRepository.findById(dto.getId());
-        Clientes clienteAtualizado = buscaCliente.get();
+        if (buscaCliente.isPresent()) {
+            Clientes clienteAtualizado = buscaCliente.get();
 
-        clientesValidation.emailValidator(dto.getEmail());
-        clientesValidation.senhaValidator(dto.getSenha());
-        dto.setSenha(criptografarSenha(dto.getSenha()));
-        modelMapper.map(dto, clienteAtualizado);
-        clientesRepository.save(clienteAtualizado);
+            clientesValidation.emailValidator(dto.getEmail());
+            clientesValidation.senhaValidator(dto.getSenha());
+            dto.setSenha(criptografarSenha(dto.getSenha()));
+            modelMapper.map(dto, clienteAtualizado);
+            clientesRepository.save(clienteAtualizado);
+            atualizarCacheClientesList();
 
-        return Optional.of(dto);
+            return Optional.of(dto);
+        }
+        return Optional.empty();
     }
 
+    @CachePut(value = "clientesList")
+    public void atualizarCacheClientesList() {
+        List<Clientes> clientes = clientesRepository.findAll();
+        List<ClientesFindDTO> dtos = new ArrayList<>();
+
+        for (Clientes cliente : clientes) {
+            ClientesFindDTO dto = modelMapper.map(cliente, ClientesFindDTO.class);
+            dtos.add(dto);
+        }
+    }
+
+    @Transactional
+    @Caching(evict = {@CacheEvict(value = "cliente", key = "#id", allEntries = true), @CacheEvict(value = "cliente", key = "#id")})
     public ResponseEntity<Void> delete(Long id) {
         clientesRepository.findById(id);
         try {

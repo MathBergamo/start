@@ -2,11 +2,12 @@ package com.start.principal.model.DTO;
 
 import lombok.Data;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @Data
-public class ClientesFindDTO {
+public class ClientesFindDTO implements Serializable {
 
     private Long id;
     private String email;
