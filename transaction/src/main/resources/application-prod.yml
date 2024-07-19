@@ -1,6 +1,5 @@
 spring:
-  datasource:
-    url: ://${DB_HOST}:${DB_PORT}/${DB_NAME}
-    username: ${DB_USER}
-    password: ${DB_PASS}
-    driver-class-name:
+  data:
+    mongodb:
+      authentication-database: admin
+      uri: mongodb://start:start@localhost:27017/transaction?authSource=admin

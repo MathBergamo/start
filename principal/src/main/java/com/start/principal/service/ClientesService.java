@@ -71,7 +71,6 @@ public class ClientesService {
         return Optional.of(modelMapper.map(clienteCadastrado, ClientesCadastroDTO.class));
     }
 
-    @Cacheable(value = "cliente", key = "#dto.email")
     public Optional<ClientesLoginDTO> autenticarCliente(ClientesLoginDTO dto) {
         clientesValidation.autenticarClienteValidator(dto);
 
