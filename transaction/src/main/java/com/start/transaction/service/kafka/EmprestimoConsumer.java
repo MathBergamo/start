@@ -19,7 +19,7 @@ public class EmprestimoConsumer {
         this.kafkaTemplate = kafkaTemplate;
     }
 
-    @KafkaListener(topics = "emprestimo-topic", groupId = "grupo_cliente", containerFactory = "kafkaListenerContainerFactory")
+    @KafkaListener(topics = "emprestimoCadastroPrincipal-topic", groupId = "grupo_emprestimoCadastroPrincipal")
     public void consumirEmprestimo(EmprestimoCadastroDTO dto) {
         emprestimoService.cadastrarEmprestimo(dto);
     }

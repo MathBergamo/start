@@ -1,6 +1,6 @@
-package com.start.principal.service.kafka;
+package com.start.transaction.service.kafka;
 
-import com.start.principal.service.kafka.DTO.EmprestimoCadastroDTO;
+import com.start.transaction.service.kafka.DTO.EmprestimoCadastroDTO;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
@@ -14,7 +14,7 @@ public class EmprestimoProducer {
     }
 
     public void enviarEmprestimo(EmprestimoCadastroDTO dto) {
-        kafkaTemplate.send("emprestimoCadastroPrincipal-topic", dto);
+        kafkaTemplate.send("emprestimoCadastroTransaction-topic", dto);
     }
 
 }
