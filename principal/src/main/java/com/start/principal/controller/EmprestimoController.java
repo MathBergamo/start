@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
@@ -29,8 +30,9 @@ public class EmprestimoController {
     @PostMapping("/cadastrar")
     public ResponseEntity<EmprestimoCadastroDTO> cadastrarCliente(@RequestBody @Valid EmprestimoCadastroDTO dto) {
         CompletableFuture<EmprestimoCadastroDTO> future = new CompletableFuture<>();
-        emprestimoConsumer.addPendingRequest(dto.getId(), future);
+        dto.setId(UUID.randomUUID().toString());
 
+        emprestimoConsumer.addPendingRequest(dto.getId(), future);
         emprestimoService.cadastrarEmprestimo(dto);
 
         try {
